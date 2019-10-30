@@ -1,5 +1,5 @@
 ## Ravengraph
-Digital Asset and Transaction viewer for Ravencoin
+Visual representation of an asset and its transfers.
 
 ## WCC2019 Hackathon
 
