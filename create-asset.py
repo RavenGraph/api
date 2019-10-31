@@ -16,6 +16,7 @@ qty = 21000000 # quantity to issue
 
 # wallet must be unlocked or this will fail
 
+print(rvn)
 r = rvn.issue(asset_name, qty)
 
 print("Created asset {}, txid: {}".format(asset_name,b2lx(r)))
