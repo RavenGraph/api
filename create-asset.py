@@ -25,7 +25,7 @@ except InvalidAssetName:
     print("Invalid asset name")
 
 for name in ["BTC"]:
-    tx.append("CREATE (asset:Assetn {name:{name}}) RETURN asset", name=name)
+    tx.append("CREATE (asset:Asset {name:{name}}) RETURN asset", name=name)
 BTC = [result.one for result in tx.commit()]
 
 # wallet must be unlocked or this will fail
