@@ -1,6 +1,8 @@
 ## Ravengraph
 Visual representation of an asset and its transfers.
 
+![Transaction Graph](public/images/neo4j-connected-addresses.png "Transaction Graph")
+
 ## Rationale
 Modern block explorers are outdated. Graph databases allow for a better
 visualization of digital assets and their corresponding transactions.
