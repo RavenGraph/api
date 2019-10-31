@@ -50,9 +50,26 @@ class TodoList(Resource):
         TODOS[todo_id] = {'task': args['task']}
         return TODOS[todo_id], 201
 
+#class RetrieveTableData(Resource):
+    #def get(self):
+        #var GetMainAssetAndCreatedVariable = query for main assets and associated nodes
+        #return GetMainAssetAndCreatedVariable 
+        #Example MATCH (p:AssetName { name:"BTC" }) - and get associated addresses
+        #RETURN p
+    
+    #def get(self)
+        #var GetCountNumberOfAssocatedNodes = query for how many of a single asset are in circulation
+        #return GetCountNumberOfAssocatedNodes
+
+    #def get(self)
+    #var NumberOfTransaction = get the number of transactions associateed with a unique asset
+    #return NumberOfTransaction
+
 
 api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
+
+#api.add_resource(RetrieveTableData, '/Info')
 
 
 if __name__ == '__main__':
