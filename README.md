@@ -1,35 +1,62 @@
-#!/usr/bin/env python3
+## Ravengraph
+Visual representation of an asset and its transfers.
 
-# simple example of asset creation using ravencoinlib
+## Rationale
+Modern block explorers are outdated. Graph databases allow for a better
+visualization of digital assets and their corresponding transactions.
 
-import ravencoin
-from neo4j import GraphDatabase
-from py2neo import Graph
-from ravencoin.assets import CMainAsset, InvalidAssetName
-from ravencoin.rpc import RavenProxy
-from ravencoin.core import b2lx
+## Sample Neo4J Cypher Queries:
+* Block
+```
+Merge (block:block {hash:$blockhash})
+CREATE UNIQUE (block)-[:coinbase]->(:output:coinbase)
+SET
+   block.size=$size,
+   block.prevblock=$prevblock,
+   block.merkleroot=$merkleroot,
+   block.time=$timestamp,
+   block.bits=$bits,
+   block.nonce=$nonce,
+   block.txcount=$txcount,
+   block.version=$version,
+   
+MERGE (prevblock:block {hash:$prevblock})
+MERGE (block)-[:chain]->(prevblock)
+```
 
-graph = Graph()
-tx = graph.begin()
+* Transaction
+```
+MATCH (block :block {hash:$hash})
+MERGE (tx:tx {txid:$txid})
+MERGE (tx)-[:inc {i:$i}]->(block)
+SET tx += {tx}    
+    
+WITH tx
+FOREACH (input in $inputs |
+         MERGE (in :output {index: input.index}) 
+         MERGE (in)-[:in {vin: input.vin, scriptSig: input.scriptSig, sequence: input.sequence, witness: input.witness}]->(tx)
+         )
+            
+FOREACH (output in $outputs |
+         MERGE (out :output {index: output.index})
+         MERGE (tx)-[:out {vout: output.vout}]->(out)
+         SET
+             out.value= output.value,
+             out.scriptPubKey= output.scriptPubKey,
+             out.addresses= output.addresses
+         FOREACH(ignoreMe IN CASE WHEN output.addresses <> '' THEN [1] ELSE [] END |
+                 MERGE (address :address {address: output.addresses})
+                 MERGE (out)-[:locked]->(address)
+                 )
+        )
+```
 
-ravencoin.SelectParams("testnet")
+## Technology
+    * Python    
+    * Flask
+    * Neo4J 
+    * Ravencoin
 
-rvn = RavenProxy() # will use local daemon, must be running with the rpc server enabled
+## WCC2019 Hackathon - Las Vegas Blockchain Week
 
-asset_name = "BTC" # your asset name
-qty = 21000000 # quantity to issue
-
-try:
-    asset_name = CMainAsset("VALID_ASSET")
-except InvalidAssetName:
-    print("Invalid asset name")
-
-for name in ["BTC"]:
-    tx.append("CREATE (asset:Asset {name:{name}}) RETURN asset", name=name)
-BTC = [result.one for result in tx.commit()]
-
-# wallet must be unlocked or this will fail
-
-r = rvn.issue(asset_name, qty)
-
-print("Created asset {}, txid: {}".format(asset_name,b2lx(r)))
+© Copyright 2019 Fodé Diop & Daniel Schafer - MIT License
