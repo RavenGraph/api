@@ -60,10 +60,17 @@ class TodoList(Resource):
     #def get(self)
         #var GetCountNumberOfAssocatedNodes = query for how many of a single asset are in circulation
         #return GetCountNumberOfAssocatedNodes
+        #Possible Query
+        #match (n:AssetName)
+        #return count(n)
+
 
     #def get(self)
     #var NumberOfTransaction = get the number of transactions associateed with a unique asset
     #return NumberOfTransaction
+    #Possible Query
+    #MATCH ()-[r:ACTED_IN]->(:AssetName)
+    #RETURN count(r) as count
 
 
 api.add_resource(TodoList, '/todos')
